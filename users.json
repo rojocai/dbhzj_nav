@@ -1,0 +1,19 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password": "7222cd5fdcd871b5de190d9c35ed8549a608c54cdf8264d21af6bfc68c45ced6",
+      "created_at": "2025-11-26T04:04:22.000Z",
+      "updated_at": "2025-11-26T04:04:22.000Z"
+    }
+  ],
+  "tokens": {
+    "8a12646c90852e82704723576b5cd69e27e934208f75d1e16bebfdd2944f33cc": "admin",
+    "622b5ecff9748c6fc763f1614fdc1e5395a3da2b182599defbbff5755a93d022": "admin",
+    "4b16fb94120ecf4de97dbaf4a5181df988ae7ff6c707fab8866d704b0584a4d0": "admin",
+    "a2dde8fea32f1c1ee65d20b6f029d0c5c4f951987eff84e404429f12722bc0c9": "admin",
+    "fe5032752c6fb93d0730a1b262ae2e4efbcbf00b65de1f682acbe3ac4160c53f": "admin",
+    "5307a5594dd78a6a7ffe0d98b4bd20825228c67fcaddd2dd03bb9ffb5178bdca": "admin"
+  }
+}

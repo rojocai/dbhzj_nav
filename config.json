@@ -1,0 +1,18 @@
+{
+  "bg_type": "gradient",
+  "bg_gradient": "linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)",
+  "accent_color": "#3b82f6",
+  "card_opacity": 0.03,
+"site_title":"东白湖之家"
+  "site_footer": "🏠 东白湖之家 · 上网从这里开始",
+  "site_icp": "",
+  "bg_color": "#0f0c29",
+  "site_logo": "",
+  "site_background": "",
+  "site_background_mobile": "",
+  "site_custom_css": "",
+  "site_custom_js": "",
+  "site_keywords": "",
+  "site_description": "",
+"site_subtitle":"东白湖 · 上网从这里开始"
+}

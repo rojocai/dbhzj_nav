@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>东白湖之家 - 上网从这里开始</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧭</text></svg>">
+    <style id="dynamicStyles">
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            min-height: 100vh;
+            color: #e0e0e0;
+            transition: background 0.5s;
+        }
+        .bg-stars {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none; z-index: 0;
+        }
+        .bg-stars::before {
+            content: '';
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.15), transparent),
+                radial-gradient(2px 2px at 40% 70%, rgba(255,255,255,0.12), transparent),
+                radial-gradient(2px 2px at 60% 20%, rgba(255,255,255,0.15), transparent),
+                radial-gradient(2px 2px at 80% 80%, rgba(255,255,255,0.1), transparent),
+                radial-gradient(1px 1px at 10% 90%, rgba(255,255,255,0.2), transparent),
+                radial-gradient(1px 1px at 70% 40%, rgba(255,255,255,0.15), transparent),
+                radial-gradient(1px 1px at 90% 10%, rgba(255,255,255,0.1), transparent),
+                radial-gradient(1px 1px at 50% 50%, rgba(255,255,255,0.08), transparent);
+            background-size: 200px 200px;
+            pointer-events: none;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; position: relative; z-index: 1; }
+
+        .search-section { text-align: center; padding: 50px 20px 30px; }
+        .search-section .logo-img { max-width: 120px; max-height: 120px; margin-bottom: 10px; border-radius: 16px; }
+        .search-section h1 { font-size: 42px; font-weight: 700; background: linear-gradient(90deg, #667eea, #764ba2, #f093fb); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; letter-spacing: 2px; }
+        .search-section p { font-size: 14px; color: #8888aa; margin-bottom: 25px; }
+        .search-box { display: inline-flex; max-width: 600px; width: 100%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 50px; overflow: hidden; backdrop-filter: blur(10px); transition: all 0.3s; }
+        .search-box:focus-within { border-color: #667eea; box-shadow: 0 0 20px rgba(102,126,234,0.3); background: rgba(255,255,255,0.12); }
+        .search-box select { background: transparent; border: none; color: #aaa; padding: 0 10px 0 18px; font-size: 14px; outline: none; cursor: pointer; min-width: 85px; }
+        .search-box select option { background: #1a1a2e; color: #e0e0e0; }
+        .search-box input { flex: 1; background: transparent; border: none; padding: 14px 12px; font-size: 16px; color: #fff; outline: none; }
+        .search-box input::placeholder { color: #666; }
+        .search-box button { background: linear-gradient(135deg, #667eea, #764ba2); border: none; color: #fff; padding: 0 28px; font-size: 16px; cursor: pointer; transition: opacity 0.2s; }
+        .search-box button:hover { opacity: 0.85; }
+
+        .quick-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 25px; }
+        .quick-links a { display: flex; align-items: center; gap: 6px; padding: 6px 16px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; color: #bbb; text-decoration: none; font-size: 13px; transition: all 0.2s; }
+        .quick-links a:hover { background: rgba(255,255,255,0.12); color: #fff; transform: translateY(-2px); }
+        .quick-links a img { width: 18px; height: 18px; border-radius: 4px; }
+
+        .categories { margin-top: 40px; }
+        .category { margin-bottom: 30px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px 24px; backdrop-filter: blur(8px); transition: all 0.3s; }
+        .category:hover { border-color: rgba(102,126,234,0.3); background: rgba(255,255,255,0.05); }
+        .category-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .category-header .icon { font-size: 22px; }
+        .category-header h2 { font-size: 18px; font-weight: 600; color: #c8c8e8; }
+        .category-header .count { font-size: 12px; color: #666; margin-left: auto; }
+        .site-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+        .site-grid a { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 8px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; text-decoration: none; color: #ccc; font-size: 13px; transition: all 0.25s; }
+        .site-grid a:hover { background: rgba(102,126,234,0.15); border-color: rgba(102,126,234,0.3); color: #fff; transform: translateY(-3px); box-shadow: 0 6px 20px rgba(102,126,234,0.15); }
+        .site-grid a img { width: 36px; height: 36px; border-radius: 9px; object-fit: cover; background: rgba(255,255,255,0.08); }
+        .site-grid a .site-name { font-size: 12px; text-align: center; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+
+        .footer { text-align: center; padding: 30px 0 20px; color: #555; font-size: 13px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 40px; }
+        .footer a { color: #667eea; text-decoration: none; }
+        .footer a:hover { text-decoration: underline; }
+
+        .admin-btn { position: fixed; bottom: 20px; right: 20px; background: rgba(102,126,234,0.3); border: 1px solid rgba(102,126,234,0.4); color: #ccc; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; backdrop-filter: blur(8px); text-decoration: none; transition: all 0.2s; z-index: 100; }
+        .admin-btn:hover { background: rgba(102,126,234,0.5); color: #fff; transform: scale(1.1); }
+
+        .loading { text-align: center; padding: 100px 0; color: #8888aa; font-size: 16px; }
+        .loading .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: #667eea; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 768px) {
+            .search-section h1 { font-size: 28px; }
+            .search-section { padding: 30px 10px 20px; }
+            .search-box { flex-wrap: wrap; border-radius: 20px; }
+            .search-box select { width: 100%; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+            .site-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; }
+            .site-grid a { padding: 10px 6px; }
+            .site-grid a img { width: 30px; height: 30px; }
+            .category { padding: 14px; }
+        }
+    </style>
+</head>
+<body>
+<div class="bg-stars"></div>
+<div class="container">
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <div>加载中...</div>
+    </div>
+    <div id="content" style="display:none">
+        <div class="search-section">
+            <img id="siteLogo" class="logo-img" style="display:none">
+            <h1 id="siteTitle">🏠 东白湖之家</h1>
+            <p id="siteSubtitle">上网从这里开始 · 收录精品网站</p>
+            <div class="search-box">
+                <select id="searchEngine"></select>
+                <input type="text" id="searchInput" placeholder="搜索你想要的..." autofocus>
+                <button onclick="doSearch()">🔍 搜索</button>
+            </div>
+            <div class="quick-links" id="quickLinks"></div>
+        </div>
+        <div class="categories" id="categories"></div>
+        <div class="footer">
+            <p id="footerText">🏠 东白湖之家 · 上网从这里开始</p>
+            <p id="footerICP"></p>
+            <p><a href="https://blog.dbhzj.top">东白湖之家</a> · <a href="https://blog.dbhzj.top">blog.dbhzj.top</a></p>
+        </div>
+    </div>
+</div>
+<a href="/admin.html" class="admin-btn" title="后台管理">⚙️</a>
+
+<script>
+const API = '/api';
+let data = null;
+let config = null;
+
+async function loadAll() {
+    try {
+        const [dataRes, configRes] = await Promise.all([
+            fetch(API + '/data'),
+            fetch(API + '/config')
+        ]);
+        data = await dataRes.json();
+        config = await configRes.json();
+        applyConfig();
+        render();
+    } catch(e) {
+        document.getElementById('loading').innerHTML = '❌ 加载数据失败，请稍后重试';
+    }
+}
+
+function applyConfig() {
+    if (!config) return;
+
+    // 背景
+    const body = document.body;
+    if (config.bg_type === 'image') {
+        if (config.site_background) {
+            const isMobile = window.innerWidth <= 768;
+            const bgUrl = isMobile && config.site_background_mobile ? config.site_background_mobile : config.site_background;
+            body.style.background = `url(${bgUrl}) center/cover fixed no-repeat`;
+            document.querySelector('.bg-stars').style.display = 'none';
+        }
+    } else if (config.bg_type === 'color') {
+        body.style.background = config.bg_color || '#0f0c29';
+        document.querySelector('.bg-stars').style.display = 'none';
+    } else {
+        // gradient (default)
+        body.style.background = config.bg_gradient || 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)';
+    }
+
+    // 强调色
+    const accent = config.accent_color || '#667eea';
+    const styleSheet = document.getElementById('dynamicStyles');
+    if (styleSheet) {
+        let css = styleSheet.textContent;
+        // 替换强调色相关
+        css = css.replace(/#667eea/g, accent);
+        styleSheet.textContent = css;
+    }
+
+    // 自定义 CSS
+    if (config.site_custom_css) {
+        const customStyle = document.createElement('style');
+        customStyle.textContent = config.site_custom_css;
+        document.head.appendChild(customStyle);
+    }
+}
+
+function render() {
+    if (!data) return;
+
+    // Logo
+    if (config && config.site_logo) {
+        const logoImg = document.getElementById('siteLogo');
+        logoImg.src = config.site_logo;
+        logoImg.style.display = 'inline';
+        // 隐藏标题
+        document.getElementById('siteTitle').style.display = 'none';
+    }
+
+    document.getElementById('siteTitle').textContent = config?.site_title || data.site.title;
+    document.getElementById('siteSubtitle').textContent = config?.site_subtitle || data.site.subtitle;
+    document.getElementById('footerText').textContent = config?.site_footer || data.site.footer;
+    document.getElementById('footerICP').textContent = config?.site_icp || '';
+
+    // 搜索引擎
+    const sel = document.getElementById('searchEngine');
+    sel.innerHTML = data.searchEngines.map((e, i) =>
+        `<option value="${e.url}" ${i===1?'selected':''}>${e.name}</option>`
+    ).join('');
+
+    // 快捷链接
+    document.getElementById('quickLinks').innerHTML = data.quickLinks.map(l =>
+        `<a href="${l.url}" target="_blank"><img src="${l.icon}" onerror="this.style.display='none'" loading="lazy"><span>${l.name}</span></a>`
+    ).join('');
+
+    // 分类
+    document.getElementById('categories').innerHTML = data.categories.map(c =>
+        `<div class="category">
+            <div class="category-header">
+                <span class="icon">${c.icon}</span>
+                <h2>${c.name}</h2>
+                <span class="count">${c.sites.length}个站点</span>
+            </div>
+            <div class="site-grid">
+                ${c.sites.map(s =>
+                    `<a href="${s.url}" target="_blank"><img src="${s.icon}" onerror="this.style.display='none'" loading="lazy"><span class="site-name">${s.name}</span></a>`
+                ).join('')}
+            </div>
+        </div>`
+    ).join('');
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('content').style.display = 'block';
+}
+
+function doSearch() {
+    const engine = document.getElementById('searchEngine').value;
+    const query = document.getElementById('searchInput').value.trim();
+    if (!query) return;
+    window.open(engine + encodeURIComponent(query), '_blank');
+}
+document.getElementById('searchInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') doSearch();
+});
+
+loadAll();
+</script>
+</body>
+</html>

@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>东白湖之家 - 后台管理</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚙️</text></svg>">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: #0f0c29;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #302b63, #24243e);
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header h1 { font-size: 22px; background: linear-gradient(90deg, #667eea, #f093fb); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header .user-info { display: flex; align-items: center; gap: 12px; font-size: 14px; color: #999; }
+        .header .user-info .username { color: #60a5fa; }
+        .header .actions { display: flex; gap: 10px; }
+        .header a, .header button {
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.06);
+            color: #ccc;
+            transition: all 0.2s;
+        }
+        .header a:hover, .header button:hover { background: rgba(255,255,255,0.12); color: #fff; }
+        .header .btn-primary { background: linear-gradient(135deg, #667eea, #764ba2); border: none; color: #fff; }
+        .header .btn-primary:hover { opacity: 0.85; }
+        .header .btn-success { background: linear-gradient(135deg, #22c55e, #16a34a); border: none; color: #fff; }
+        .header .btn-success:hover { opacity: 0.85; }
+        .header .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); border: none; color: #fff; }
+        .header .btn-danger:hover { opacity: 0.85; }
+        .header .btn-ghost { background: transparent; border: 1px solid rgba(255,255,255,0.12); color: #999; }
+        .header .btn-ghost:hover { background: rgba(255,255,255,0.06); color: #fff; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+        .section { margin-bottom: 30px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px 24px; }
+        .section-title { font-size: 18px; font-weight: 600; color: #c8c8e8; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 13px; color: #999; margin-bottom: 4px; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus, .form-group textarea:focus { border-color: #667eea; }
+        .form-group textarea { min-height: 60px; resize: vertical; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        .site-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+        .site-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .site-item:hover { border-color: rgba(255,255,255,0.12); }
+        .site-item .info { flex: 1; }
+        .site-item .info .name { font-size: 14px; color: #e0e0e0; }
+        .site-item .info .url { font-size: 12px; color: #667eea; }
+        .site-item .actions { display: flex; gap: 6px; }
+        .site-item .actions button {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            border: none;
+            background: rgba(255,255,255,0.08);
+            color: #aaa;
+            transition: all 0.2s;
+        }
+        .site-item .actions button:hover { background: rgba(255,255,255,0.15); color: #fff; }
+        .site-item .actions .edit-btn { color: #60a5fa; }
+        .site-item .actions .del-btn { color: #f87171; }
+        .site-item .actions .edit-btn:hover { background: rgba(96,165,250,0.2); }
+        .site-item .actions .del-btn:hover { background: rgba(248,113,113,0.2); }
+
+        .category-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .category-card .cat-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .category-card .cat-header input { 
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            color: #e0e0e0;
+            font-size: 16px;
+            padding: 4px 8px;
+            outline: none;
+            flex: 1;
+        }
+        .category-card .cat-header input:focus { border-color: #667eea; }
+        .category-card .cat-header .icon-input { width: 50px; text-align: center; font-size: 20px; }
+        .category-card .cat-header .cat-actions { display: flex; gap: 6px; }
+        .category-card .cat-header .cat-actions button {
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+        .category-card .cat-header .add-site-btn { background: rgba(34,197,94,0.2); color: #22c55e; }
+        .category-card .cat-header .add-site-btn:hover { background: rgba(34,197,94,0.3); }
+        .category-card .cat-header .del-cat-btn { background: rgba(239,68,68,0.2); color: #f87171; }
+        .category-card .cat-header .del-cat-btn:hover { background: rgba(239,68,68,0.3); }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .toast.success { background: rgba(34,197,94,0.85); }
+        .toast.error { background: rgba(239,68,68,0.85); }
+        .toast.info { background: rgba(96,165,250,0.85); }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        .empty-state { text-align: center; padding: 30px; color: #666; font-size: 14px; }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 200;
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: #1e1b3a;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 24px;
+            width: 90%;
+            max-width: 480px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal h3 { font-size: 18px; margin-bottom: 16px; color: #c8c8e8; }
+        .modal .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+        .modal .modal-actions button { padding: 8px 20px; border-radius: 8px; font-size: 14px; cursor: pointer; border: none; }
+        .modal .modal-actions .btn-cancel { background: rgba(255,255,255,0.08); color: #aaa; }
+        .modal .modal-actions .btn-cancel:hover { background: rgba(255,255,255,0.15); }
+        .modal .modal-actions .btn-confirm { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; }
+        .modal .modal-actions .btn-confirm:hover { opacity: 0.85; }
+
+        .site-edit-form .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+        .radio-card {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 18px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            color: #aaa;
+        }
+        .radio-card:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: #e0e0e0; }
+        .radio-card input { display: none; }
+        .radio-card.active { background: rgba(102,126,234,0.15); border-color: #667eea; color: #fff; }
+
+        .gradient-preset, .color-preset {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 2px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+            padding: 0;
+        }
+        .gradient-preset:hover, .color-preset:hover {
+            border-color: #667eea;
+            transform: scale(1.15);
+        }
+        .gradient-preset.active, .color-preset.active {
+            border-color: #fff;
+            box-shadow: 0 0 8px rgba(102,126,234,0.5);
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.1);
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: 2px solid #fff;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch { border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; }
+
+        @media (max-width: 768px) {
+            .form-row { grid-template-columns: 1fr; }
+            .header { flex-direction: column; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>🏠 东白湖之家 - 后台管理</h1>
+    <div class="user-info" id="userInfo" style="display:none">
+        <span>👤 <span class="username" id="currentUser"></span></span>
+        <button onclick="showChangePassword()" class="btn-ghost" style="padding:4px 12px;font-size:12px;">🔑 修改密码</button>
+        <button onclick="logout()" class="btn-ghost" style="padding:4px 12px;font-size:12px;color:#f87171;">🚪 退出</button>
+    </div>
+    <div class="actions">
+        <button onclick="saveData()" class="btn-success" id="saveBtn">💾 保存</button>
+        <a href="/" target="_blank">🔗 查看导航</a>
+    </div>
+</div>
+
+<div id="toastContainer"></div>
+<div id="modalOverlay" class="modal-overlay"><div class="modal" id="modalContent"></div></div>
+
+<!-- 登录页面 -->
+<div id="loginPage">
+    <div style="max-width:400px;margin:120px auto;padding:40px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:20px;text-align:center;">
+        <div style="font-size:48px;margin-bottom:16px;">🔐</div>
+        <h2 style="font-size:24px;margin-bottom:8px;color:#c8c8e8;">后台登录</h2>
+        <p style="font-size:13px;color:#666;margin-bottom:28px;">请输入管理员账号密码</p>
+        <div class="form-group"><label>用户名</label><input id="loginUsername" placeholder="admin" value="admin"></div>
+        <div class="form-group"><label>密码</label><input id="loginPassword" type="password" placeholder="admin123" onkeydown="if(event.key==='Enter')doLogin()"></div>
+        <button onclick="doLogin()" class="btn-primary" style="width:100%;padding:12px;border:none;border-radius:10px;font-size:16px;cursor:pointer;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;">登 录</button>
+        <div id="loginError" style="color:#f87171;font-size:13px;margin-top:12px;display:none;"></div>
+    </div>
+</div>
+
+<!-- 管理内容 -->
+<div id="adminContent" style="display:none">
+<div class="container">
+    <!-- 基本设置 -->
+    <div class="section">
+        <div class="section-title">📝 基本设置</div>
+        <div class="form-row">
+            <div class="form-group"><label>网站标题</label><input id="siteTitle" placeholder="东白湖之家"></div>
+            <div class="form-group"><label>副标题</label><input id="siteSubtitle" placeholder="东白湖 · 上网从这里开始"></div>
+        </div>
+        <div class="form-group"><label>底部文字</label><input id="siteFooter" placeholder="🏠 东白湖之家 · 上网从这里开始"></div>
+        <div class="form-group"><label>ICP备案号</label><input id="siteIcp" placeholder="沪ICP备XXXXXXXX号-1"></div>
+    </div>
+
+    <!-- 外观设置 -->
+    <div class="section">
+        <div class="section-title">🎨 外观设置</div>
+
+        <div class="form-group">
+            <label>背景类型</label>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <label class="radio-card" data-value="gradient">
+                    <input type="radio" name="bgType" value="gradient" onchange="onBgTypeChange('gradient')">
+                    <span>🌈 渐变背景</span>
+                </label>
+                <label class="radio-card" data-value="image">
+                    <input type="radio" name="bgType" value="image" onchange="onBgTypeChange('image')">
+                    <span>🖼️ 图片背景</span>
+                </label>
+                <label class="radio-card" data-value="color">
+                    <input type="radio" name="bgType" value="color" onchange="onBgTypeChange('color')">
+                    <span>🎨 纯色背景</span>
+                </label>
+            </div>
+        </div>
+
+        <div id="bgGradientGroup" class="form-group">
+            <label>渐变背景CSS</label>
+            <input id="bgGradient" placeholder="linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
+                <button type="button" class="gradient-preset" data-value="linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)" style="background:linear-gradient(135deg,#0f0c29,#302b63,#24243e)" title="暗夜紫"></button>
+                <button type="button" class="gradient-preset" data-value="linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)" style="background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)" title="深海蓝"></button>
+                <button type="button" class="gradient-preset" data-value="linear-gradient(135deg, #0d1117 0%, #161b22 50%, #21262d 100%)" style="background:linear-gradient(135deg,#0d1117,#161b22,#21262d)" title="GitHub暗"></button>
+                <button type="button" class="gradient-preset" data-value="linear-gradient(135deg, #1e0a3c 0%, #2d1b69 50%, #0f0c29 100%)" style="background:linear-gradient(135deg,#1e0a3c,#2d1b69,#0f0c29)" title="星空紫"></button>
+                <button type="button" class="gradient-preset" data-value="linear-gradient(135deg, #0a1628 0%, #1a3a5c 50%, #0a1628 100%)" style="background:linear-gradient(135deg,#0a1628,#1a3a5c,#0a1628)" title="极夜蓝"></button>
+                <button type="button" class="gradient-preset" data-value="linear-gradient(135deg, #1a0a0a 0%, #3d1a1a 50%, #1a0a0a 100%)" style="background:linear-gradient(135deg,#1a0a0a,#3d1a1a,#1a0a0a)" title="暗红酒"></button>
+            </div>
+        </div>
+
+        <div id="bgImageGroup" class="form-group" style="display:none">
+            <div class="form-group"><label>背景图片URL (PC端)</label><input id="bgImage" placeholder="https://example.com/bg.jpg"></div>
+            <div class="form-group"><label>背景图片URL (手机端，可选)</label><input id="bgImageMobile" placeholder="留空则使用PC端图片"></div>
+            <div class="form-group">
+                <label>或上传图片</label>
+                <div style="display:flex;gap:8px;">
+                    <input type="file" id="bgUploadInput" accept="image/*">
+                    <button type="button" class="btn-ghost" onclick="uploadBg()" style="padding:8px 16px;">📤 上传</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="bgColorGroup" class="form-group" style="display:none">
+            <label>背景颜色</label>
+            <div style="display:flex;gap:10px;align-items:center;">
+                <input id="bgColor" type="color" value="#0f0c29" style="width:50px;height:40px;padding:2px;border:none;border-radius:6px;cursor:pointer;background:transparent;">
+                <input id="bgColorText" placeholder="#0f0c29" style="width:150px;">
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;">
+                <button type="button" class="color-preset" data-value="#0f0c29" style="background:#0f0c29" title="暗夜紫"></button>
+                <button type="button" class="color-preset" data-value="#1a1a2e" style="background:#1a1a2e" title="深蓝"></button>
+                <button type="button" class="color-preset" data-value="#0d1117" style="background:#0d1117" title="极黑"></button>
+                <button type="button" class="color-preset" data-value="#1e1e2e" style="background:#1e1e2e" title="猫猫文"></button>
+                <button type="button" class="color-preset" data-value="#2d1b69" style="background:#2d1b69" title="紫罗兰"></button>
+                <button type="button" class="color-preset" data-value="#1a0a2e" style="background:#1a0a2e" title="深紫"></button>
+                <button type="button" class="color-preset" data-value="#0a1628" style="background:#0a1628" title="夜空"></button>
+                <button type="button" class="color-preset" data-value="#1a1a1a" style="background:#1a1a1a" title="炭黑"></button>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>网站Logo (图片URL)</label>
+                <input id="siteLogo" placeholder="https://example.com/logo.png（留空显示文字标题）">
+            </div>
+            <div class="form-group">
+                <label>强调色 (主题色)</label>
+                <div style="display:flex;gap:10px;align-items:center;">
+                    <input id="accentColor" type="color" value="#667eea" style="width:50px;height:40px;padding:2px;border:none;border-radius:6px;cursor:pointer;background:transparent;">
+                    <input id="accentColorText" placeholder="#667eea" style="width:130px;">
+                </div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;">
+                    <button type="button" class="color-preset" data-value="#667eea" style="background:#667eea" title="默认紫"></button>
+                    <button type="button" class="color-preset" data-value="#3b82f6" style="background:#3b82f6" title="蓝色"></button>
+                    <button type="button" class="color-preset" data-value="#06b6d4" style="background:#06b6d4" title="青色"></button>
+                    <button type="button" class="color-preset" data-value="#22c55e" style="background:#22c55e" title="绿色"></button>
+                    <button type="button" class="color-preset" data-value="#f59e0b" style="background:#f59e0b" title="金色"></button>
+                    <button type="button" class="color-preset" data-value="#ef4444" style="background:#ef4444" title="红色"></button>
+                    <button type="button" class="color-preset" data-value="#ec4899" style="background:#ec4899" title="粉色"></button>
+                    <button type="button" class="color-preset" data-value="#a855f7" style="background:#a855f7" title="紫色"></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>卡片透明度</label>
+            <div style="display:flex;gap:12px;align-items:center;">
+                <input id="cardOpacity" type="range" min="0" max="0.15" step="0.01" value="0.03" style="flex:1;accent-color:#667eea;">
+                <span id="cardOpacityValue" style="font-size:13px;color:#888;min-width:40px;">0.03</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>自定义CSS (高级)</label>
+            <textarea id="customCss" rows="4" placeholder="/* 在这里写入自定义CSS样式 */" style="font-family:monospace;font-size:13px;"></textarea>
+        </div>
+        <div class="form-group">
+            <label>自定义JS (高级)</label>
+            <textarea id="customJs" rows="3" placeholder="// 在这里写入自定义JavaScript" style="font-family:monospace;font-size:13px;"></textarea>
+        </div>
+    </div>
+
+    <!-- 搜索引擎 -->
+    <div class="section">
+        <div class="section-title">
+            🔍 搜索引擎
+            <button onclick="addEngine()" style="margin-left:auto;padding:4px 12px;border-radius:6px;font-size:12px;cursor:pointer;border:none;background:rgba(34,197,94,0.2);color:#22c55e;">+ 添加</button>
+        </div>
+        <div id="engineList"></div>
+    </div>
+
+    <!-- 快捷链接 -->
+    <div class="section">
+        <div class="section-title">
+            ⚡ 快捷链接
+            <button onclick="addQuickLink()" style="margin-left:auto;padding:4px 12px;border-radius:6px;font-size:12px;cursor:pointer;border:none;background:rgba(34,197,94,0.2);color:#22c55e;">+ 添加</button>
+        </div>
+        <div id="quickLinkList"></div>
+    </div>
+
+    <!-- 分类管理 -->
+    <div class="section">
+        <div class="section-title">
+            📂 分类管理
+            <button onclick="addCategory()" style="margin-left:auto;padding:4px 12px;border-radius:6px;font-size:12px;cursor:pointer;border:none;background:rgba(34,197,94,0.2);color:#22c55e;">+ 添加分类</button>
+        </div>
+        <div id="categoryList"></div>
+    </div>
+</div>
+</div>
+
+<script>
+const API = '/api';
+let data = null;
+let config = null;
+let currentUsername = '';
+
+// ===== 登录 =====
+async function checkLogin() {
+    try {
+        const res = await fetch(API + '/verify');
+        const result = await res.json();
+        if (result.success) {
+            currentUsername = result.user.username;
+            showAdmin(result.user.username);
+        } else {
+            showLogin();
+        }
+    } catch(e) {
+        showLogin();
+    }
+}
+
+function showLogin() {
+    document.getElementById('loginPage').style.display = 'block';
+    document.getElementById('adminContent').style.display = 'none';
+}
+
+function showAdmin(username) {
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('adminContent').style.display = 'block';
+    document.getElementById('userInfo').style.display = 'flex';
+    document.getElementById('currentUser').textContent = username;
+    loadData();
+}
+
+async function doLogin() {
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+    const errEl = document.getElementById('loginError');
+    
+    if (!username || !password) {
+        errEl.textContent = '请输入用户名和密码';
+        errEl.style.display = 'block';
+        return;
+    }
+
+    try {
+        const res = await fetch(API + '/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+        const result = await res.json();
+        
+        if (result.success) {
+            errEl.style.display = 'none';
+            currentUsername = result.user.username;
+            showAdmin(result.user.username);
+            toast('登录成功', 'success');
+        } else {
+            errEl.textContent = result.error || '登录失败';
+            errEl.style.display = 'block';
+        }
+    } catch(e) {
+        errEl.textContent = '网络错误，请重试';
+        errEl.style.display = 'block';
+    }
+}
+
+async function logout() {
+    await fetch(API + '/logout', { method: 'POST' });
+    currentUsername = '';
+    showLogin();
+    toast('已退出登录', 'info');
+}
+
+// ===== 修改密码 =====
+function showChangePassword() {
+    showModal('🔑 修改账号密码', `
+        <div class="form-group"><label>新用户名 (留空不修改)</label><input id="cpUsername" value="${esc(currentUsername)}" placeholder="admin"></div>
+        <div class="form-group"><label>旧密码</label><input id="cpOldPass" type="password" placeholder="当前密码"></div>
+        <div class="form-group"><label>新密码 (至少6位)</label><input id="cpNewPass" type="password" placeholder="新密码"></div>
+        <div class="form-group"><label>确认新密码</label><input id="cpConfirmPass" type="password" placeholder="再次输入新密码"></div>
+        <p style="font-size:12px;color:#888;margin-top:8px;">修改后需要重新登录</p>
+    `, async () => {
+        const newUsername = document.getElementById('cpUsername').value.trim();
+        const oldPassword = document.getElementById('cpOldPass').value;
+        const newPassword = document.getElementById('cpNewPass').value;
+        const confirmPassword = document.getElementById('cpConfirmPass').value;
+
+        if (!oldPassword) { toast('请输入旧密码', 'error'); return; }
+        if (!newPassword || newPassword.length < 6) { toast('新密码至少6位', 'error'); return; }
+        if (newPassword !== confirmPassword) { toast('两次密码不一致', 'error'); return; }
+
+        try {
+            const res = await fetch(API + '/change-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    oldPassword, 
+                    newPassword,
+                    newUsername: newUsername || undefined
+                })
+            });
+            const result = await res.json();
+            
+            if (result.success) {
+                toast(result.message || '密码修改成功，请重新登录', 'success');
+                closeModal();
+                setTimeout(() => logout(), 1500);
+            } else {
+                toast(result.error || '修改失败', 'error');
+            }
+        } catch(e) {
+            toast('网络错误', 'error');
+        }
+    });
+}
+
+// ===== 导航数据 =====
+async function loadData() {
+    try {
+        const [dataRes, configRes] = await Promise.all([
+            fetch(API + '/data'),
+            fetch(API + '/config')
+        ]);
+        data = await dataRes.json();
+        config = await configRes.json();
+        renderAll();
+        renderConfig();
+    } catch(e) {
+        toast('加载数据失败: ' + e.message, 'error');
+    }
+}
+
+function renderAll() {
+    if (!data) return;
+    document.getElementById('siteTitle').value = data.site.title || '';
+    document.getElementById('siteSubtitle').value = data.site.subtitle || '';
+    document.getElementById('siteFooter').value = data.site.footer || '';
+    document.getElementById('siteIcp').value = config?.site_icp || '';
+    renderEngines();
+    renderQuickLinks();
+    renderCategories();
+}
+
+// ===== 外观设置 =====
+function renderConfig() {
+    if (!config) return;
+
+    // 背景类型
+    const bgType = config.bg_type || 'gradient';
+    document.querySelectorAll('input[name="bgType"]').forEach(r => {
+        r.checked = (r.value === bgType);
+    });
+    document.querySelectorAll('.radio-card').forEach(el => {
+        const val = el.getAttribute('data-value');
+        el.classList.toggle('active', val === bgType);
+    });
+    onBgTypeChange(bgType);
+
+    // 渐变背景
+    document.getElementById('bgGradient').value = config.bg_gradient || '';
+
+    // 图片背景
+    document.getElementById('bgImage').value = config.site_background || '';
+    document.getElementById('bgImageMobile').value = config.site_background_mobile || '';
+
+    // 纯色背景
+    document.getElementById('bgColor').value = config.bg_color || '#0f0c29';
+    document.getElementById('bgColorText').value = config.bg_color || '#0f0c29';
+
+    // Logo
+    document.getElementById('siteLogo').value = config.site_logo || '';
+
+    // 强调色
+    const accent = config.accent_color || '#667eea';
+    document.getElementById('accentColor').value = accent;
+    document.getElementById('accentColorText').value = accent;
+
+    // 卡片透明度
+    const opacity = config.card_opacity !== undefined ? config.card_opacity : 0.03;
+    document.getElementById('cardOpacity').value = opacity;
+    document.getElementById('cardOpacityValue').textContent = opacity;
+
+    // 自定义CSS/JS
+    document.getElementById('customCss').value = config.site_custom_css || '';
+    document.getElementById('customJs').value = config.site_custom_js || '';
+}
+
+function onBgTypeChange(type) {
+    document.getElementById('bgGradientGroup').style.display = type === 'gradient' ? 'block' : 'none';
+    document.getElementById('bgImageGroup').style.display = type === 'image' ? 'block' : 'none';
+    document.getElementById('bgColorGroup').style.display = type === 'color' ? 'block' : 'none';
+
+    document.querySelectorAll('.radio-card').forEach(el => {
+        el.classList.toggle('active', el.getAttribute('data-value') === type);
+    });
+}
+
+// ===== 颜色/渐变预设点击 =====
+document.addEventListener('click', function(e) {
+    const preset = e.target.closest('.color-preset');
+    if (preset) {
+        const val = preset.getAttribute('data-value');
+        const parent = preset.closest('.form-group');
+        if (parent) {
+            const colorInput = parent.querySelector('input[type="color"]');
+            const textInput = parent.querySelector('input[type="text"]');
+            if (colorInput) colorInput.value = val;
+            if (textInput) textInput.value = val;
+        }
+        document.querySelectorAll('.color-preset').forEach(p => p.classList.remove('active'));
+        preset.classList.add('active');
+    }
+
+    const gPreset = e.target.closest('.gradient-preset');
+    if (gPreset) {
+        const val = gPreset.getAttribute('data-value');
+        document.getElementById('bgGradient').value = val;
+        document.querySelectorAll('.gradient-preset').forEach(p => p.classList.remove('active'));
+        gPreset.classList.add('active');
+    }
+});
+
+// 颜色输入同步
+document.addEventListener('input', function(e) {
+    if (e.target.id === 'bgColor' || e.target.id === 'bgColorText') {
+        const color = document.getElementById('bgColor');
+        const text = document.getElementById('bgColorText');
+        if (e.target.id === 'bgColor') text.value = e.target.value;
+        else if (/^#[0-9a-f]{6}$/i.test(e.target.value)) color.value = e.target.value;
+    }
+    if (e.target.id === 'accentColor' || e.target.id === 'accentColorText') {
+        const color = document.getElementById('accentColor');
+        const text = document.getElementById('accentColorText');
+        if (e.target.id === 'accentColor') text.value = e.target.value;
+        else if (/^#[0-9a-f]{6}$/i.test(e.target.value)) color.value = e.target.value;
+    }
+    if (e.target.id === 'cardOpacity') {
+        document.getElementById('cardOpacityValue').textContent = e.target.value;
+    }
+});
+
+// ===== 上传背景图片 =====
+async function uploadBg() {
+    const fileInput = document.getElementById('bgUploadInput');
+    const file = fileInput.files[0];
+    if (!file) { toast('请选择要上传的图片', 'error'); return; }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        const res = await fetch(API + '/upload', { method: 'POST', body: formData });
+        const result = await res.json();
+        if (result.success) {
+            document.getElementById('bgImage').value = result.url;
+            toast('图片上传成功！', 'success');
+        } else {
+            toast('上传失败: ' + (result.error || '未知错误'), 'error');
+        }
+    } catch(e) {
+        toast('上传失败: ' + e.message, 'error');
+    }
+}
+
+// ===== 搜索引擎 =====
+function renderEngines() {
+    const el = document.getElementById('engineList');
+    el.innerHTML = data.searchEngines.map((e, i) => `
+        <div class="site-item">
+            <div class="info">
+                <div class="name">${e.name}</div>
+                <div class="url">${e.url}</div>
+            </div>
+            <div class="actions">
+                <button class="edit-btn" onclick="editEngine(${i})">✏️ 编辑</button>
+                <button class="del-btn" onclick="deleteEngine(${i})">🗑️ 删除</button>
+            </div>
+        </div>
+    `).join('');
+    if (data.searchEngines.length === 0) {
+        el.innerHTML = '<div class="empty-state">暂无搜索引擎，点击上方添加</div>';
+    }
+}
+
+function addEngine() {
+    showModal('添加搜索引擎', `
+        <div class="form-group"><label>名称</label><input id="engineName" placeholder="Google"></div>
+        <div class="form-group"><label>搜索URL</label><input id="engineUrl" placeholder="https://www.google.com/search?q="></div>
+    `, () => {
+        const name = document.getElementById('engineName').value.trim();
+        const url = document.getElementById('engineUrl').value.trim();
+        if (!name || !url) { toast('请填写完整信息', 'error'); return; }
+        data.searchEngines.push({ name, url });
+        renderEngines();
+        toast('搜索引擎已添加', 'success');
+        closeModal();
+    });
+}
+
+function editEngine(i) {
+    const e = data.searchEngines[i];
+    showModal('编辑搜索引擎', `
+        <div class="form-group"><label>名称</label><input id="engineName" value="${esc(e.name)}"></div>
+        <div class="form-group"><label>搜索URL</label><input id="engineUrl" value="${esc(e.url)}"></div>
+    `, () => {
+        data.searchEngines[i] = {
+            name: document.getElementById('engineName').value.trim(),
+            url: document.getElementById('engineUrl').value.trim()
+        };
+        renderEngines();
+        toast('已更新', 'success');
+        closeModal();
+    });
+}
+
+function deleteEngine(i) {
+    if (!confirm('确定删除搜索引擎「' + data.searchEngines[i].name + '」？')) return;
+    data.searchEngines.splice(i, 1);
+    renderEngines();
+    toast('已删除', 'info');
+}
+
+// ===== 快捷链接 =====
+function renderQuickLinks() {
+    const el = document.getElementById('quickLinkList');
+    el.innerHTML = data.quickLinks.map((l, i) => `
+        <div class="site-item">
+            <div class="info">
+                <div class="name">${l.name}</div>
+                <div class="url">${l.url}</div>
+            </div>
+            <div class="actions">
+                <button class="edit-btn" onclick="editQuickLink(${i})">✏️ 编辑</button>
+                <button class="del-btn" onclick="deleteQuickLink(${i})">🗑️ 删除</button>
+            </div>
+        </div>
+    `).join('');
+    if (data.quickLinks.length === 0) {
+        el.innerHTML = '<div class="empty-state">暂无快捷链接</div>';
+    }
+}
+
+function addQuickLink() {
+    showModal('添加快捷链接', `
+        <div class="form-group"><label>名称</label><input id="qlName" placeholder="百度"></div>
+        <div class="form-group"><label>链接</label><input id="qlUrl" placeholder="https://www.baidu.com"></div>
+        <div class="form-group"><label>图标URL (可选)</label><input id="qlIcon" placeholder="https://www.baidu.com/favicon.ico"></div>
+    `, () => {
+        const name = document.getElementById('qlName').value.trim();
+        const url = document.getElementById('qlUrl').value.trim();
+        const icon = document.getElementById('qlIcon').value.trim() || `https://${new URL(url).hostname}/favicon.ico`;
+        if (!name || !url) { toast('请填写名称和链接', 'error'); return; }
+        data.quickLinks.push({ name, url, icon });
+        renderQuickLinks();
+        toast('快捷链接已添加', 'success');
+        closeModal();
+    });
+}
+
+function editQuickLink(i) {
+    const l = data.quickLinks[i];
+    showModal('编辑快捷链接', `
+        <div class="form-group"><label>名称</label><input id="qlName" value="${esc(l.name)}"></div>
+        <div class="form-group"><label>链接</label><input id="qlUrl" value="${esc(l.url)}"></div>
+        <div class="form-group"><label>图标URL</label><input id="qlIcon" value="${esc(l.icon||'')}"></div>
+    `, () => {
+        data.quickLinks[i] = {
+            name: document.getElementById('qlName').value.trim(),
+            url: document.getElementById('qlUrl').value.trim(),
+            icon: document.getElementById('qlIcon').value.trim()
+        };
+        renderQuickLinks();
+        toast('已更新', 'success');
+        closeModal();
+    });
+}
+
+function deleteQuickLink(i) {
+    if (!confirm('确定删除快捷链接「' + data.quickLinks[i].name + '」？')) return;
+    data.quickLinks.splice(i, 1);
+    renderQuickLinks();
+    toast('已删除', 'info');
+}
+
+// ===== 分类管理 =====
+function renderCategories() {
+    const el = document.getElementById('categoryList');
+    el.innerHTML = data.categories.map((c, ci) => `
+        <div class="category-card">
+            <div class="cat-header">
+                <input class="icon-input" value="${esc(c.icon)}" onchange="updateCat(${ci},'icon',this.value)" placeholder="图标">
+                <input value="${esc(c.name)}" onchange="updateCat(${ci},'name',this.value)" placeholder="分类名称">
+                <span style="font-size:12px;color:#666;">${c.sites.length}个站点</span>
+                <div class="cat-actions">
+                    <button class="add-site-btn" onclick="addSite(${ci})">+ 添加站点</button>
+                    <button class="del-cat-btn" onclick="deleteCategory(${ci})">🗑 删除</button>
+                </div>
+            </div>
+            <div class="site-list" id="siteList-${ci}">
+                ${c.sites.map((s, si) => `
+                    <div class="site-item">
+                        <div class="info">
+                            <div class="name">${s.name}</div>
+                            <div class="url">${s.url}</div>
+                        </div>
+                        <div class="actions">
+                            <button class="edit-btn" onclick="editSite(${ci},${si})">✏️ 编辑</button>
+                            <button class="del-btn" onclick="deleteSite(${ci},${si})">🗑️ 删除</button>
+                        </div>
+                    </div>
+                `).join('')}
+                ${c.sites.length === 0 ? '<div class="empty-state">暂无站点</div>' : ''}
+            </div>
+        </div>
+    `).join('');
+    if (data.categories.length === 0) {
+        el.innerHTML = '<div class="empty-state">暂无分类，点击上方添加</div>';
+    }
+}
+
+function updateCat(ci, field, value) {
+    data.categories[ci][field] = value;
+}
+
+function addCategory() {
+    showModal('添加分类', `
+        <div class="form-group"><label>图标 (emoji)</label><input id="catIcon" placeholder="📁" value="📁"></div>
+        <div class="form-group"><label>分类名称</label><input id="catName" placeholder="新分类"></div>
+    `, () => {
+        const icon = document.getElementById('catIcon').value.trim() || '📁';
+        const name = document.getElementById('catName').value.trim() || '新分类';
+        data.categories.push({ icon, name, sites: [] });
+        renderCategories();
+        toast('分类已添加', 'success');
+        closeModal();
+    });
+}
+
+function deleteCategory(ci) {
+    if (!confirm('确定删除分类「' + data.categories[ci].name + '」及其所有站点？')) return;
+    data.categories.splice(ci, 1);
+    renderCategories();
+    toast('分类已删除', 'info');
+}
+
+function addSite(ci) {
+    showModal('添加站点', `
+        <div class="form-group"><label>站点名称</label><input id="siteName" placeholder="ChatGPT"></div>
+        <div class="form-group"><label>链接</label><input id="siteUrl" placeholder="https://chatgpt.com"></div>
+        <div class="form-group"><label>图标URL (可选,留空自动)</label><input id="siteIcon" placeholder="https://chatgpt.com/favicon.ico"></div>
+    `, () => {
+        const name = document.getElementById('siteName').value.trim();
+        const url = document.getElementById('siteUrl').value.trim();
+        if (!name || !url) { toast('请填写名称和链接', 'error'); return; }
+        let icon = document.getElementById('siteIcon').value.trim();
+        if (!icon) {
+            try { icon = `https://${new URL(url).hostname}/favicon.ico`; } catch(e) { icon = ''; }
+        }
+        data.categories[ci].sites.push({ name, url, icon });
+        renderCategories();
+        toast('站点已添加', 'success');
+        closeModal();
+    });
+}
+
+function editSite(ci, si) {
+    const s = data.categories[ci].sites[si];
+    showModal('编辑站点', `
+        <div class="form-group"><label>站点名称</label><input id="siteName" value="${esc(s.name)}"></div>
+        <div class="form-group"><label>链接</label><input id="siteUrl" value="${esc(s.url)}"></div>
+        <div class="form-group"><label>图标URL</label><input id="siteIcon" value="${esc(s.icon||'')}"></div>
+    `, () => {
+        data.categories[ci].sites[si] = {
+            name: document.getElementById('siteName').value.trim(),
+            url: document.getElementById('siteUrl').value.trim(),
+            icon: document.getElementById('siteIcon').value.trim()
+        };
+        renderCategories();
+        toast('已更新', 'success');
+        closeModal();
+    });
+}
+
+function deleteSite(ci, si) {
+    const s = data.categories[ci].sites[si];
+    if (!confirm('确定删除站点「' + s.name + '」？')) return;
+    data.categories[ci].sites.splice(si, 1);
+    renderCategories();
+    toast('已删除', 'info');
+}
+
+// ===== 保存 =====
+async function saveData() {
+    data.site.title = document.getElementById('siteTitle').value.trim() || '东白湖之家';
+    data.site.subtitle = document.getElementById('siteSubtitle').value.trim() || '上网从这里开始';
+    data.site.footer = document.getElementById('siteFooter').value.trim() || '🏠 东白湖之家 · 上网从这里开始';
+
+    // 收集外观配置
+    const newConfig = {
+        site_title: document.getElementById('siteTitle').value.trim() || '东白湖之家',
+        site_subtitle: document.getElementById('siteSubtitle').value.trim() || '上网从这里开始',
+        site_logo: document.getElementById('siteLogo').value.trim(),
+        site_background: document.getElementById('bgImage').value.trim(),
+        site_background_mobile: document.getElementById('bgImageMobile').value.trim(),
+        site_footer: document.getElementById('siteFooter').value.trim() || '🏠 东白湖之家 · 上网从这里开始',
+        site_icp: document.getElementById('siteIcp').value.trim(),
+        site_custom_css: document.getElementById('customCss').value.trim(),
+        site_custom_js: document.getElementById('customJs').value.trim(),
+        bg_type: document.querySelector('input[name="bgType"]:checked')?.value || 'gradient',
+        bg_color: document.getElementById('bgColorText').value.trim() || '#0f0c29',
+        bg_gradient: document.getElementById('bgGradient').value.trim() || 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)',
+        card_opacity: parseFloat(document.getElementById('cardOpacity').value) || 0.03,
+        accent_color: document.getElementById('accentColorText').value.trim() || '#667eea',
+        site_keywords: config?.site_keywords || '',
+        site_description: config?.site_description || ''
+    };
+
+    const btn = document.getElementById('saveBtn');
+    btn.textContent = '⏳ 保存中...';
+    btn.disabled = true;
+
+    try {
+        const [dataRes, configRes] = await Promise.all([
+            fetch(API + '/data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }),
+            fetch(API + '/config', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newConfig)
+            })
+        ]);
+        const dataResult = await dataRes.json();
+        const configResult = await configRes.json();
+
+        if (dataResult.success && configResult.success) {
+            toast('✅ 保存成功！刷新导航页即可看到变化', 'success');
+        } else {
+            toast('❌ ' + (dataResult.error || configResult.error || '保存失败'), 'error');
+        }
+    } catch(e) {
+        toast('❌ 保存失败: ' + e.message, 'error');
+    }
+
+    btn.textContent = '💾 保存';
+    btn.disabled = false;
+}
+
+// ===== 工具函数 =====
+function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function toast(msg, type) {
+    const el = document.createElement('div');
+    el.className = 'toast ' + type;
+    el.textContent = msg;
+    document.getElementById('toastContainer').appendChild(el);
+    setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(() => el.remove(), 300); }, 3000);
+}
+
+function showModal(title, body, onConfirm) {
+    const overlay = document.getElementById('modalOverlay');
+    const content = document.getElementById('modalContent');
+    content.innerHTML = `
+        <h3>${title}</h3>
+        ${body}
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeModal()">取消</button>
+            <button class="btn-confirm" id="modalConfirmBtn">确定</button>
+        </div>
+    `;
+    overlay.classList.add('active');
+    document.getElementById('modalConfirmBtn').onclick = onConfirm;
+}
+
+function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('active');
+}
+
+document.getElementById('modalOverlay').onclick = function(e) {
+    if (e.target === this) closeModal();
+};
+
+// ===== 启动 =====
+checkLogin();
+</script>
+</body>
+</html>
